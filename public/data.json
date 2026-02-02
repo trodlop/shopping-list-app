@@ -1,0 +1,8 @@
+{
+    "0": {
+        "name" : "Eggs",
+        "count" : "1",
+        "priority" : true,
+        "checked" : false
+    }
+}
