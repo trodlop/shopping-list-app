@@ -15,7 +15,48 @@
 
 <body>
     
-    <div id="main_grid_parent" class="template_main_grid"></div> <!-- Main list parent element -->
+    <div id="header">
+        <div id="header_items">
+
+            <div id="temp_container" class="template_header_items">
+                <img id="temp_img" src="./media/icons/new.svg" alt="">
+            </div>
+
+            <div id="new_item_container" class="template_header_items">
+                <img id="new_item_img" src="./media/icons/new.svg" alt="New Item">
+            </div>
+
+        </div>
+    </div>
+
+    <div id="main_grid_parent" class="template_main_grid"></div>
+
+    <div id="new_item_window">
+
+        <div id="new_item_close_window">
+            <img id="new_item_close_window_img" src="./media/icons/close.svg" alt="">
+        </div>
+
+        <div id="new_item_content">
+
+            <form id="new_item_form"> <!-- onsubmit="return false;" to prevent reloading page on submit FOR DEBUGGING -->
+                <div class="template_form_subcontainer">
+                    <label id="new_item_form_name_label" class="new_item_form_label" for="new_item_form_name_input">Item name:</label>
+                    <input id="new_item_form_name_input" class="new_item_form_input" type="text" placeholder="eg. Eggs" required>
+                </div>
+                
+                <div class="template_form_subcontainer">
+                    <label id="new_item_form_count_label" class="new_item_form_label" for="new_item_form_count_input">Item count:</label>
+                    <input id="new_item_form_count_input" class="new_item_form_input" type="text" placeholder="eg. 12" required>
+                </div>
+                
+                <div id="new_item_form_submit_container">
+                    <button id="new_item_form_submit" type="submit">ADD ITEM</button>
+                </div>
+            </form>
+
+        </div>
+    </div>
     
 </body>
 

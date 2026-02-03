@@ -22,6 +22,22 @@ async function load_list() {
 
     // console.log(shopping_list_array, Array.isArray(shopping_list_array));
 };
+function reorder_shopping_list(list_array) {
+
+    const sorted_array = Object.values(list_array);
+
+    sorted_array.sort((a, b) => {
+        // 1️) Sort by priority
+        if (a.priority !== b.priority) {
+            return a.priority ? -1 : 1;
+        };
+
+        // 2) Sort alphabetically by name
+        return a.name.localeCompare(b.name);
+    });
+
+    shopping_list_array = sorted_array; // Update shopping list
+};
 function generate_list_html(parent_element, list_array) {
     
     parent_element.innerHTML = ""; // clear existing html
@@ -133,9 +149,11 @@ function intitialise_event_listeners() {
             const list_item = event.target.closest(".template_list_item"); // Get parent list item
             delete_shopping_list_item(list_item.id);
         };
-
     });
-    
+
+    document.getElementById("new_item_container").addEventListener("click", open_new_item_window);
+    document.getElementById("new_item_close_window_img").addEventListener("click", close_new_item_window);
+    document.getElementById("new_item_form_submit").addEventListener("click", new_shopping_list_item);
 };
 function toggle_checkbox(img) {
     let checked;
@@ -170,21 +188,6 @@ function toggle_star(img) {
 };
 
 //! -------------------------------------------------------------------------
-function reorder_shopping_list(list_object) {
-
-    const list_array = Object.values(list_object);
-
-    list_array.sort((a, b) => {
-        return a.name.localeCompare(b.name);
-    });
-
-    console.log(list_array);
-
-    throw new Error(); // To exit out of the program
-    
-};
-
-//! -------------------------------------------------------------------------
 function update_shopping_list_item(item_id, edit_type, data) { // Edit types: "priority_toggle" : true/false, "checked_toggle" : true/false
     
     const item_reference = shopping_list_array.find(item => item.id === item_id); // Find specific item by id
@@ -205,6 +208,8 @@ function update_shopping_list_item(item_id, edit_type, data) { // Edit types: "p
     };
 
     write_to_file(shopping_list_array);
+    reorder_shopping_list(shopping_list_array);
+    generate_list_html(main_parent_element, shopping_list_array);
 };
 function delete_shopping_list_item(item_id) {
 
@@ -219,10 +224,28 @@ function delete_shopping_list_item(item_id) {
     write_to_file(shopping_list_array);
     
 };
-function new_shopping_list_item(item_name, count) {
+function new_shopping_list_item() {
+    
+    const item_name = document.getElementById("new_item_form_name_input").value;
+    const item_count = document.getElementById("new_item_form_count_input").value;
+
+    console.log(item_name, item_count);
 
     let uuid = Math.random().toString(36).slice(2, 2 + 10); // Generate new UUID of length 10
     console.log(uuid);
+
+    shopping_list_array.push({"id" : uuid, "name" : item_name, "count" : item_count, "priority" : false, "checked" : false});
+    write_to_file(shopping_list_array);
+    console.log(shopping_list_array);
+    
+}; //TODO       SEE IN FUNCTION WHEN DONE
+function open_new_item_window() {
+    const new_item_window = document.getElementById("new_item_window");
+    new_item_window.style.display = "flex";
+}
+function close_new_item_window() {
+    const new_item_window = document.getElementById("new_item_window");
+    new_item_window.style.display = "none";
 };
 
 //! -------------------------------------------------------------------------
@@ -237,6 +260,7 @@ function write_to_file(data) {
 
 //! -------------------------------------------------------------------------
 load_list().then(() => {
+    reorder_shopping_list(shopping_list_array),
     generate_list_html(main_parent_element, shopping_list_array),
     intitialise_event_listeners(),
     console.log("HTML Initialised")

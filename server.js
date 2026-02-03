@@ -54,7 +54,6 @@ app.use(express.json());
 
 import fs from "fs";
 
-const appointment_json_file_path = path.join(__dirname, 'public', 'data', 'appointment_booking.json');
 const path_to_data = path.join(__dirname, "public", "data.json");
 
 // Write updated data to file
