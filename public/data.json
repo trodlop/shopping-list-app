@@ -1,18 +1,18 @@
 {
-    "list" : [
+    "list": [
         {
-            "id" : "1234567890",
-            "name" : "Eggs",
-            "count" : "6",
-            "priority" : true,
-            "checked" : true
+            "id": "1234567890",
+            "name": "Eggs",
+            "count": "6",
+            "priority": true,
+            "checked": false
         },
         {
-            "id" : "1234567809",
-            "name" : "Bread",
-            "count" : "1",
-            "priority" : false,
-            "checked" : false
+            "id": "1234567809",
+            "name": "Bread",
+            "count": "1",
+            "priority": false,
+            "checked": false
         }
     ]
 }

@@ -1,7 +1,10 @@
+// Extra JavaScript functions
+import { removeItemFromArray, removeItemFromObject } from "./JSplus.js"
 
 // General parameters
 const path_to_icons = "./media/icons/";
 const path_to_data = "./data.json";
+const main_parent_element = document.getElementById("main_grid_parent");
 
 // Main shopping list data
 let shopping_list_object = {};
@@ -19,17 +22,16 @@ async function load_list() {
 
     // console.log(shopping_list_array, Array.isArray(shopping_list_array));
 };
-function generate_list_html() {
+function generate_list_html(parent_element, list_array) {
     
-    const parent_container = document.getElementById("main_grid_parent");
-    parent_container.innerHTML = ""; // clear existing html
+    parent_element.innerHTML = ""; // clear existing html
 
-    for (let i = 0; i < shopping_list_array.length; i++) {
-        const item_object = shopping_list_array[i];
+    for (let i = 0; i < list_array.length; i++) {
+        const item_object = list_array[i];
         
         const item_div = create_list_item_html(item_object); // Generate the html for each item
         
-        parent_container.appendChild(item_div); // Append each div to parent div
+        parent_element.appendChild(item_div); // Append each div to parent div
     };
 };
 function create_list_item_html(item_object) {    
@@ -127,6 +129,11 @@ function intitialise_event_listeners() {
             toggle_star(event.target);
         };
 
+        if (event.target.classList.contains("template_list_item_delete_img")) {
+            const list_item = event.target.closest(".template_list_item"); // Get parent list item
+            delete_shopping_list_item(list_item.id);
+        };
+
     });
     
 };
@@ -180,19 +187,36 @@ function reorder_shopping_list(list_object) {
 //! -------------------------------------------------------------------------
 function update_shopping_list_item(item_id, edit_type, data) { // Edit types: "priority_toggle" : true/false, "checked_toggle" : true/false
     
-    const item = shopping_list_array.find(item => item.id === item_id); // Find specific item by id
+    const item_reference = shopping_list_array.find(item => item.id === item_id); // Find specific item by id
     
-    if (edit_type == "priority_toggle") {
-        item.priority = data;
-    } else if (edit_type == "checked_toggle") {
-        item.checked = data;
+    if (edit_type == "priority_toggle" && item_id) {
+        item_reference.priority = data;
+        console.info(`Shopping list item changed:\nName - ${item_reference.name}\nPriority - ${item_reference.priority}`);
+        console.table(item_reference);
+
+    } else if (edit_type == "checked_toggle" && item_id) {
+        item_reference.checked = data;
+        console.info(`Shopping list item changed:\nName - ${item_reference.name}\nChecked - ${item_reference.checked}`);
+        console.table(item_reference);
+
     } else {
+        console.warn("An item in the shopping list tried to be changed but either:\n - no edit type was given\n - no item id was given");
         return;
     };
-    console.log(item);
-    
+
+    write_to_file(shopping_list_array);
 };
-function delete_shopping_list_item(item_name) {
+function delete_shopping_list_item(item_id) {
+
+    const item_reference = shopping_list_array.find(item => item.id === item_id); // Returns specific object reference from array rather than item
+    console.info(`Shopping list item removed:\nName - ${item_reference.name}\nPriority - ${item_reference.priority}`);
+    console.table(item_reference);
+    
+    shopping_list_array = removeItemFromArray(shopping_list_array, item_reference) // Delete item from array using object reference
+
+    generate_list_html(main_parent_element, shopping_list_array);
+
+    write_to_file(shopping_list_array);
     
 };
 function new_shopping_list_item(item_name, count) {
@@ -202,8 +226,18 @@ function new_shopping_list_item(item_name, count) {
 };
 
 //! -------------------------------------------------------------------------
+function write_to_file(data) {
+    console.log(data);
+    fetch("/write-data", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ list: shopping_list_array })
+    });
+};
+
+//! -------------------------------------------------------------------------
 load_list().then(() => {
-    generate_list_html(),
+    generate_list_html(main_parent_element, shopping_list_array),
     intitialise_event_listeners(),
-    console.log("Done...")
+    console.log("HTML Initialised")
 });

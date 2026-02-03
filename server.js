@@ -55,47 +55,23 @@ app.use(express.json());
 import fs from "fs";
 
 const appointment_json_file_path = path.join(__dirname, 'public', 'data', 'appointment_booking.json');
+const path_to_data = path.join(__dirname, "public", "data.json");
 
-//! IGNORE FOR NOW!
-function update_appointment_json_file(date, time) {
-
-    const all_timeslots = ["0900", "0930", "1000", "1030", "1100", "1130", "1200", "1230", "1300", "1330", "1400", "1430", "1500", "1530", "1600", "1630", "1700"];
-    const formatted_time = time.replace(":", "");
-
+// Write updated data to file
+function update_data_json(data, res) {
+    // Write to the file
     try {
-        let appointment_data = {};
+        fs.writeFileSync(path_to_data, JSON.stringify(data, null, 4));
+        res.send("Saved data");
 
-        // Load existing data if file exists
-        if (fs.existsSync(appointment_json_file_path)) {
-            const raw_data = fs.readFileSync(appointment_json_file_path);
-            appointment_data = JSON.parse(raw_data);
-        };
-
-        // Add or update the slot for the date
-        if (!appointment_data[date]) {
-            appointment_data[date] = {
-                availability: "available",
-                slots: [formatted_time]
-            };
-        } else {
-            if (!appointment_data[date].slots.includes(formatted_time)) {
-                appointment_data[date].slots.push(formatted_time);
-            };
-        };
-
-        // Check if selected date is now fully booked
-        const bookedSlots = appointment_data[date].slots;
-        const is_fully_booked = all_timeslots.every(slot => bookedSlots.includes(slot));
-
-        appointment_data[date].availability = is_fully_booked ? "unavailable" : "available";
-
-        // Write back to the file
-        fs.writeFileSync(appointment_json_file_path, JSON.stringify(appointment_data, null, 4));
     } catch (err) {
-        console.error("Error updating appointment JSON file:", err);
+        console.error("Error updating data JSON file:", err);
+        return res.status(500).send("Failed to save data");
     };
 };
-//! IGNORE FOR NOW!
+app.post("/write-data", (req, res) => {
+    update_data_json(req.body, res)
+});
 
 // Set the view engine to EJS
 app.set("view engine", "ejs");
