@@ -21,9 +21,9 @@ const PORT = process.env.PORT || 3000;
 export let website_url;
 
 if (process.env.NODE_ENV === "production") {
-  website_url = "https://autoworx-test-1b3129537a3f.herokuapp.com";
+    website_url = "https://autoworx-test-1b3129537a3f.herokuapp.com";
 } else {
-  website_url = `http://localhost:${PORT}`;
+    website_url = `http://localhost:${PORT}`;
 }
 
 const __filename = fileURLToPath(import.meta.url);
@@ -41,12 +41,12 @@ app.set('trust proxy', true);
 // });
 
 // Middleware to log response status code after response is sent
-app.use((req, res, next) => {
-    res.on('finish', function() {
-    console.log(`Response Status: ${res.statusCode} for ${req.method} ${req.originalUrl}`); // Optional for debugging
-    });
-    next();
-});
+// app.use((req, res, next) => {
+//     res.on('finish', function() {
+//     console.log(`Response Status: ${res.statusCode} for ${req.method} ${req.originalUrl}`); // Optional for debugging
+//     });
+//     next();
+// });
 
 // Body-parsing middleware (fix for req.body being undefined)
 app.use(express.urlencoded({ extended: true }));

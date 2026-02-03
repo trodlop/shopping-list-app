@@ -51,6 +51,7 @@ body {
 .template_list_item_name {
     font-size: 4vw;
     text-align: left;
+    margin-left: 20px;
 }
 
 .template_list_item_count {

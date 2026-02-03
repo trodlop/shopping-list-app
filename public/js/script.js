@@ -1,7 +1,7 @@
 
 // General parameters
 const path_to_icons = "./media/icons/";
-const path_to_data = "./data.json"
+const path_to_data = "./data.json";
 
 // Main shopping list data
 let shopping_list_object = {};
