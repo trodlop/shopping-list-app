@@ -1,0 +1,209 @@
+
+// General parameters
+const path_to_icons = "./media/icons/";
+const path_to_data = "./data.json"
+
+// Main shopping list data
+let shopping_list_object = {};
+let shopping_list_array = [];
+
+// Load object from json file
+async function load_list() {
+    const response = await fetch(path_to_data);
+    const data = await response.json();
+
+    // this is now an array
+    shopping_list_object = data.list;    
+
+    shopping_list_array = Array.from(Object.values(shopping_list_object));   
+
+    // console.log(shopping_list_array, Array.isArray(shopping_list_array));
+};
+function generate_list_html() {
+    
+    const parent_container = document.getElementById("main_grid_parent");
+    parent_container.innerHTML = ""; // clear existing html
+
+    for (let i = 0; i < shopping_list_array.length; i++) {
+        const item_object = shopping_list_array[i];
+        
+        const item_div = create_list_item_html(item_object); // Generate the html for each item
+        
+        parent_container.appendChild(item_div); // Append each div to parent div
+    };
+};
+function create_list_item_html(item_object) {    
+
+    // Parent container
+    const parent_div = document.createElement("div");
+    parent_div.className = "template_list_item";
+    parent_div.id = item_object.id; // Give unique id to each list item
+
+    const grid = document.createElement("div");
+    grid.className = "template_list_item_grid";
+
+    // Priority icon
+    const item_priority_div = document.createElement("div");
+    item_priority_div.className = "template_list_item_priority";
+
+    const item_priority_img = document.createElement("img");
+    item_priority_img.className = "template_list_item_priority_img";
+    if (item_object.priority == true) {
+        item_priority_img.src = `${path_to_icons}star_checked.svg`;
+    } 
+    else if (item_object.priority == false) {
+        item_priority_img.src = `${path_to_icons}star_unchecked.svg`;
+    }    
+
+    item_priority_div.appendChild(item_priority_img);
+
+    // Checkbox icon
+    const item_checkbox_div = document.createElement("div");
+    item_checkbox_div.className = "template_list_item_checkbox";
+
+    const item_checkbox_img = document.createElement("img");
+    item_checkbox_img.className = "template_list_item_checkbox_img";
+    if (item_object.checked) {
+        item_checkbox_img.src = `${path_to_icons}checkbox_checked.svg`;
+    } else {
+        item_checkbox_img.src = `${path_to_icons}checkbox_unchecked.svg`;
+    }
+
+    item_checkbox_div.appendChild(item_checkbox_img);
+
+    // Name
+    const item_name_div = document.createElement("div");
+    item_name_div.className = "template_center_v";
+
+    const item_name_h1 = document.createElement("h1");
+    item_name_h1.className = "template_list_item_name";
+    item_name_h1.textContent = item_object.name;
+
+    item_name_div.appendChild(item_name_h1);
+
+    // Count
+    const item_count_div = document.createElement("div");
+    item_count_div.className = "template_center_v";
+
+    const item_count_h1 = document.createElement("h1");
+    item_count_h1.className = "template_list_item_count";
+    item_count_h1.textContent = item_object.count;
+
+    item_count_div.appendChild(item_count_h1);
+
+    // Delete icon
+    const item_delete_div = document.createElement("div");
+    item_delete_div.className = "template_list_item_delete";
+
+    const item_delete_img = document.createElement("img");
+    item_delete_img.className = "template_list_item_delete_img";
+    item_delete_img.src = `${path_to_icons}delete.svg`;
+
+    item_delete_div.appendChild(item_delete_img);
+
+    // Assemble grid
+    grid.append(
+        item_priority_div,
+        item_checkbox_div,
+        item_name_div,
+        item_count_div,
+        item_delete_div
+    );
+
+    parent_div.appendChild(grid);  
+
+    return parent_div;
+};
+
+//! -------------------------------------------------------------------------
+function intitialise_event_listeners() {
+    document.getElementById("main_grid_parent").addEventListener("click", (event) => {
+
+        if (event.target.classList.contains("template_list_item_checkbox_img")) {
+            toggle_checkbox(event.target);
+        };
+
+        if (event.target.classList.contains("template_list_item_priority_img")) {
+            toggle_star(event.target);
+        };
+
+    });
+    
+};
+function toggle_checkbox(img) {
+    let checked;
+
+    if (img.src.includes("checkbox_checked")) {
+        img.src = `${path_to_icons}checkbox_unchecked.svg`;
+        checked = false;
+    } else {
+        img.src = `${path_to_icons}checkbox_checked.svg`;
+        checked = true;
+    };
+
+    
+    const list_item = img.closest(".template_list_item"); // Get parent list item
+    
+    update_shopping_list_item(list_item.id, "checked_toggle", checked);    
+};
+function toggle_star(img) {
+    let priority;
+
+    if (img.src.includes("star_checked")) {
+        img.src = `${path_to_icons}star_unchecked.svg`;
+        priority = false;
+    } else {
+        img.src = `${path_to_icons}star_checked.svg`;
+        priority = true;
+    };
+
+    const list_item = img.closest(".template_list_item"); // Get parent list item
+
+    update_shopping_list_item(list_item.id, "priority_toggle", priority);    
+};
+
+//! -------------------------------------------------------------------------
+function reorder_shopping_list(list_object) {
+
+    const list_array = Object.values(list_object);
+
+    list_array.sort((a, b) => {
+        return a.name.localeCompare(b.name);
+    });
+
+    console.log(list_array);
+
+    throw new Error(); // To exit out of the program
+    
+};
+
+//! -------------------------------------------------------------------------
+function update_shopping_list_item(item_id, edit_type, data) { // Edit types: "priority_toggle" : true/false, "checked_toggle" : true/false
+    
+    const item = shopping_list_array.find(item => item.id === item_id); // Find specific item by id
+    
+    if (edit_type == "priority_toggle") {
+        item.priority = data;
+    } else if (edit_type == "checked_toggle") {
+        item.checked = data;
+    } else {
+        return;
+    };
+    console.log(item);
+    
+};
+function delete_shopping_list_item(item_name) {
+    
+};
+function new_shopping_list_item(item_name, count) {
+
+    let uuid = Math.random().toString(36).slice(2, 2 + 10); // Generate new UUID of length 10
+    console.log(uuid);
+};
+
+//! -------------------------------------------------------------------------
+load_list().then(() => {
+    generate_list_html(),
+    intitialise_event_listeners(),
+    console.log("Done...")
+});

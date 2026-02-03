@@ -1,0 +1,120 @@
+/* General styles */
+* {
+    margin: 0px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    text-decoration: none;
+}
+
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* General template styles */
+.template_center_h {
+    display: flex;
+    justify-content: center;
+}
+.template_center_v {
+    display: flex;
+    align-items: center;
+}
+
+/* Element template styles */
+.template_main_grid {
+    width: 80vw;
+}
+.template_main_grid > div:not(:last-child) {
+    border-bottom: 3px solid rgb(150, 150, 150);
+}
+
+.template_list_item_grid {
+    display: grid;
+    grid-template-columns: auto auto 1fr 1fr 70px;
+    gap: 3px;
+    padding: 10px 0px 20px;
+}
+
+.template_list_item_checkbox{
+    margin: 10px 10px 0px 10px;
+}
+.template_list_item_checkbox:hover {
+    cursor: pointer;
+    opacity: 70%;
+}
+.template_list_item_checkbox_img {
+    height: 4vw;
+    width: 4vw;
+}
+
+.template_list_item_name {
+    font-size: 4vw;
+    text-align: left;
+}
+
+.template_list_item_count {
+    text-align: left;
+}
+
+.template_list_item_priority {
+    margin: 10px 10px 0px 10px;
+}
+.template_list_item_priority:hover {
+    cursor: pointer;
+    opacity: 70%;
+}
+.template_list_item_priority_img {
+    height: 4vw;
+    width: 4vw;
+}
+
+.template_list_item_delete{
+    margin: 10px 10px 0px 10px;
+}
+.template_list_item_delete:hover {
+    cursor: pointer;
+    opacity: 70%;
+}
+.template_list_item_delete_img {
+    height: 4vw;
+    width: 4vw;
+}
+
+
+/* Checkbox template */
+.template_checkbox {
+  display: inline-block;
+  cursor: pointer;
+}
+.template_checkbox input {
+  display: none;
+}
+.template_checkbox span {
+  width: 45px;
+  height: 45px;
+  border: 5px solid #000;
+  border-radius: 15px;
+  display: inline-block;
+  position: relative;
+}
+/* checkmark */
+.template_checkbox span::after {
+  content: "";
+  position: absolute;
+  left: 12px;
+  top: 1px;
+  width: 15px;
+  height: 30px;
+  border: solid #34b93d;
+  border-width: 0 6px 6px 0;
+  transform: rotate(45deg);
+  opacity: 0;
+}
+/* show check when checked */
+.template_checkbox input:checked + span::after {
+  opacity: 1;
+}
+.template_checkbox input:checked + span {
+  border-color: #34b93d;
+}
